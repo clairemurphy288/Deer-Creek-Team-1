@@ -193,3 +193,37 @@ void loop() {
     lineFollow();
   }  
 }
+
+
+
+// struct State {
+//   private:
+//     int wheel1Speed; 
+//     int wheel2Speed; 
+//     int wheel3Speed; 
+//     int wheel4Speed;
+//     int timeInState; 
+// }
+
+// State states[15000]; 
+
+// void traceMemorizedLine() { 
+//   boolean keepGoing = true; 
+//   int i = 0; 
+//   while (keepGoing) {
+//     if (i == (sizeof(states)/sizeof(states[0]))) {
+//       keepGoing = false; 
+//     }
+//     if (states[i] == 0) {
+//       keepGoing = false; 
+//     }
+
+//     State* currState = states[i]; 
+//     // then get stuff for each wheel and call functions to
+//   }
+// }
+
+
+
+
+
