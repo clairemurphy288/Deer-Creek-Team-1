@@ -196,34 +196,41 @@ void loop() {
 
 
 
-// struct State {
-//   private:
-//     int wheel1Speed; 
-//     int wheel2Speed; 
-//     int wheel3Speed; 
-//     int wheel4Speed;
-//     int timeInState; 
-// }
-
-// State states[15000]; 
-
-// void traceMemorizedLine() { 
-//   boolean keepGoing = true; 
-//   int i = 0; 
-//   while (keepGoing) {
-//     if (i == (sizeof(states)/sizeof(states[0]))) {
-//       keepGoing = false; 
-//     }
-//     if (states[i] == 0) {
-//       keepGoing = false; 
-//     }
-
-//     State* currState = states[i]; 
-//     // then get stuff for each wheel and call functions to
-//   }
-// }
 
 
 
 
+/* Basic Line Memorization */ 
 
+/* 
+ * Structure to store a state of the robot 
+ * and the duration in that state  
+ */
+struct State {
+  int motor1Power; 
+  int motor9Power; 
+  int motor2Power;  
+  int motor10Power; 
+  int time; 
+}
+
+// Example, this would be filled by line following the first time
+State states[] = {{1, 1, 1, 1, 10},
+                  {2, 2, 2, 2, 10}}; 
+int numStates = sizeof(states)/sizeof(State); 
+retraceLine(states, numStates); 
+
+/* 
+ * Retraces a memorized line given an array of States 
+ * and the number of states in the array 
+ */ 
+void retraceLine(State states[], int n) {
+  for (int i = 0; i < n; i++) {
+    State currState = states[i];
+    motor1_.run(currState.motor1Power);
+    motor9_.run(currState.motor9Power); 
+    motor_2.run(currState.motor2Power);
+    motor_10.run(currState.motor10Power);   
+    _delay(currState.time); 
+  }
+}
