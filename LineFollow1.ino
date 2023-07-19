@@ -207,11 +207,11 @@ void loop() {
  * and the duration in that state  
  */
 struct State {
-  int motor1Power; 
-  int motor9Power; 
-  int motor2Power;  
-  int motor10Power; 
-  int time; 
+  double motor1Power; 
+  double motor9Power; 
+  double motor2Power;  
+  double motor10Power; 
+  double time; 
 }
 
 // Example, this would be filled by line following the first time
