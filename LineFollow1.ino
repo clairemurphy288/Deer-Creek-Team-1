@@ -99,10 +99,11 @@ void lineFollow(){
   //rgbled_68.setColor(i, 100, 100, 100);
   //rgbled_68.show();
   //}
-  double startTime = millis();  // 5 
-  int n = -1; 
+// 0 on line 
+// 1 off line 
 
-  while (linefollower_63.readSensor() !=0 && linefollower_64.readSensor !=0) {
+// until both sensors are off (end of line) -> (sensor1 != 1 && sensor2 != 1)
+  while (linefollower_63.readSensor() !=0 && linefollower_64.readSensor() !=0) {
 
     if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
       Forward();
@@ -119,7 +120,7 @@ void lineFollow(){
     Serial.println("left") ;
   }
 
-  else (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
+  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
     Stop();
     Serial.println("neither");
   }
@@ -273,14 +274,14 @@ void memorizeLine() {
           startTime = millis(); 
           currState = left;  
     }
-    Serial.println("in state: left") ;
+    Serial.println("in state: left");
   }
 
   // stop 
-  else (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
+  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
     Stop();
     if (currState != stop) {
-          State temp = {0, 0, 0, 0, 0}
+          State temp = {0, 0, 0, 0, 0}; 
           states[index] = temp; 
           numStates = index + 1; 
           return states; 
