@@ -19,6 +19,14 @@ MeMegaPiDCMotor motor_9(9);
 MeMegaPiDCMotor motor_2(2);
 MeMegaPiDCMotor motor_10(10);
 
+ struct  State{
+  double motor1Power; 
+  double motor9Power; 
+  double motor2Power;  
+  double motor10Power;  
+  double time; 
+};
+
 double angle_rad = PI/180.0;
 double angle_deg = 180.0/PI;
 
@@ -205,106 +213,101 @@ void loop() {
  * Structure to store a state of the robot 
  * and the duration in that state  
  */
-//struct State {
-//  double motor1Power; 
-//  double motor9Power; 
-//  double motor2Power;  
-//  double motor10Power;  
-//  double time; 
-//}
 
-// Enum for the line state 
-//enum lineState { forward, left, right, stop, start}; 
-//
-//int numStates = 0; // total states we go through 
-//State states[1000]; // stores the memorized path 
+
+//enum for the line state 
+enum lineState { forward, left, right, stop, start}; 
+
+int numStates = 0; // total states we go through 
+State states[1000]; // stores the memorized path 
 
 /*
  * Does line following, while also 
  * storing the path followed
  */ 
-//void memorizeLine() {
-//  double startTime = millis(); 
-//  lineState currState = start; 
-//  int index = 0;
-//
-//  while (linefollower_63.readSensor() !=0 && linefollower_64.readSensor !=0) {
-//
-//    // forward
-//    if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
-//      Forward();
-//      if (currState != forward) {
-//          double t = millis() - startTime; 
-//          double p = power * 255; 
-//          State temp = {-p, -p, p, p, t};
-//          states[index] = temp; 
-//          index += 1; 
-//          startTime = millis(); 
-//          currState = forward;  
-//      }
-//      Serial.println("in state: forward"); 
-//    }
-//
-//  // right 
-//  else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
-//    TurnRight();
-//    if (currState != right) {
-//          double t = millis() - startTime;  
-//          State temp = {-power*255, -power*255, 0, 0, t};
-//          states[index] = temp; 
-//          index += 1; 
-//          startTime = millis(); 
-//          currState = right;  
-//    }
-//    Serial.println("in state: right"); 
-//  }
-//
-//  // left 
-//  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
-//    TurnLeft();
-//    if (currState != left) {
-//          double t = millis() - startTime;  
-//          State temp = {0, 0, power*255, power*255, t}; 
-//          states[index] = temp; 
-//          index += 1; 
-//          startTime = millis(); 
-//          currState = left;  
-//    }
-//    Serial.println("in state: left") ;
-//  }
-//
-//  // stop 
-//  else (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
-//    Stop();
-//    if (currState != stop) {
-//          State temp = {0, 0, 0, 0, 0}
-//          states[index] = temp; 
-//          numStates = index + 1; 
-//          return states; 
-//    }
-//    Serial.println("neither");
-//  }  
-//} 
-//
-///* 
-// * Retraces a memorized line given an array of States 
-// * and the number of states in the array 
-// */ 
-//void retraceLine(State states[], int n) {
-//  for (int i = 0; i < n; i++) {
-//    State currState = states[i];
-//    motor1_.run(currState.motor1Power);
-//    motor9_.run(currState.motor9Power); 
-//    motor_2.run(currState.motor2Power);
-//    motor_10.run(currState.motor10Power);   
-//    _delay(currState.time); 
-//  }
-//}
-//
-//
-///* Main code for line memorization and retracing */ 
-//void lineMemorizeMain() {
-//  memorizeLine(); 
-//  // do something for delay while moving robot 
-//  retraceLine(states, numStates); 
-//}
+void memorizeLine() {
+  double startTime = millis(); 
+  lineState currState = start; 
+  int index = 0;
+
+  while (linefollower_63.readSensor() !=0 && linefollower_64.readSensor() !=0) {
+
+    // Forward
+    if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
+      Forward();
+      if (currState != forward) {
+          double t = millis() - startTime; 
+          double p = power * 255; 
+          State temp = {-p, -p, p, p, t};
+          states[index] = temp; 
+          index += 1; 
+          startTime = millis(); 
+          currState = forward;  
+      }
+      Serial.println("in state: forward"); 
+    }
+
+  // right 
+  else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
+    TurnRight();
+    if (currState != right) {
+          double t = millis() - startTime;  
+          State temp = {-power*255, -power*255, 0, 0, t};
+          states[index] = temp; 
+          index += 1; 
+          startTime = millis(); 
+          currState = right;  
+    }
+    Serial.println("in state: right"); 
+  }
+
+  // left 
+  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
+    TurnLeft();
+    if (currState != left) {
+          double t = millis() - startTime;  
+          State temp = {0, 0, power*255, power*255, t}; 
+          states[index] = temp; 
+          index += 1; 
+          startTime = millis(); 
+          currState = left;  
+    }
+    Serial.println("in state: left") ;
+  }
+
+  // stop 
+  else {
+    Stop();
+    if (currState != stop) {
+          State temp = {0, 0, 0, 0, 0};
+          states[index] = temp; 
+          numStates = index + 1;
+    }
+    Serial.println("neither");
+  }  
+} 
+}
+/* 
+ * Retraces a memorized line given an array of States 
+ * and the number of states in the array 
+ */ 
+
+
+void retraceLine(State states[], int n) {
+  for (int i = 0; i < n; i++) {
+    State currState = states[i];
+    motor_1.run(currState.motor1Power);
+    motor_9.run(currState.motor9Power); 
+    motor_2.run(currState.motor2Power);
+    motor_10.run(currState.motor10Power);   
+    _delay(currState.time); 
+  }
+}
+
+
+/* Main code for line memorization and retracing */ 
+void lineMemorizeMain() {
+  memorizeLine(); 
+  // do something for delay while moving robot 
+  retraceLine(states, numStates); 
+}
