@@ -135,21 +135,20 @@ void ObstacleAvoidance(){
     motor_2.run(0.5*255);
     motor_10.run(0.5*255);
   }
-  }
+}
 
 void Forward(){
   motor_1.run(-power*255);
   motor_9.run(-power*255);
   motor_2.run(power*255);
   motor_10.run(power*255);
-  }
+}
 
 void Backward(){
   motor_1.run(power*255);
   motor_9.run(power*255);
   motor_2.run(-power*255);
   motor_10.run(-power*255);
- 
 }
 
 void TurnLeft(){
@@ -157,7 +156,6 @@ void TurnLeft(){
   motor_9.run(0);
   motor_2.run(power*255);
   motor_10.run(power*255);
-  
 }
 
 void TurnRight(){
@@ -189,7 +187,7 @@ void loop() {
       ObstacleAvoidance();
     }
     else {
-    lineFollow();
+      lineFollow();
   }  
 }
 
