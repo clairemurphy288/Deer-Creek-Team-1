@@ -99,32 +99,29 @@ void lineFollow(){
   //rgbled_68.setColor(i, 100, 100, 100);
   //rgbled_68.show();
   //}
-// 0 on line 
-// 1 off line 
+  // 0 on line 
+  // 1 off line 
 
-// until both sensors are off (end of line) -> (sensor1 != 1 && sensor2 != 1)
+  // until both sensors are off (end of line) -> (sensor1 != 1 && sensor2 != 1)
   while (linefollower_63.readSensor() !=0 && linefollower_64.readSensor() !=0) {
-
+    
     if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
       Forward();
-    Serial.println("both"); 
+      Serial.println("both"); 
     }
-
-  else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
-    TurnRight();
-    Serial.println("right"); 
+    else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
+      TurnRight();
+      Serial.println("right"); 
+    }
+    else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
+      TurnLeft();
+      Serial.println("left") ;
+    }
+    else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
+      Stop();
+      Serial.println("neither");
+    }
   }
-
-  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
-    TurnLeft();
-    Serial.println("left") ;
-  }
-
-  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
-    Stop();
-    Serial.println("neither");
-  }
-  
 }
 
 void ObstacleAvoidance(){
@@ -171,14 +168,13 @@ void TurnRight(){
 }
 
 void StrafeLeft(){
-
-move_control(power * 255,0 / 100.0 * 255,0 / 100.0 * 255);
-_delay(float(T));
+  move_control(power * 255,0 / 100.0 * 255,0 / 100.0 * 255);
+  _delay(float(T));
 }
 
 void StrafeRight(){
-move_control(-power * 255,0 / 100.0 * 255,0 / 100.0 * 255);
-_delay(float(T));
+  move_control(-power * 255,0 / 100.0 * 255,0 / 100.0 * 255);
+  _delay(float(T));
 }
 
 void Stop(){
@@ -196,11 +192,6 @@ void loop() {
     lineFollow();
   }  
 }
-
-
-
-
-
 
 
 /* LINE MEMORIZATION */ 
@@ -249,46 +240,47 @@ void memorizeLine() {
       Serial.println("in state: forward"); 
     }
 
-  // right 
-  else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
-    TurnRight();
-    if (currState != right) {
-          double t = millis() - startTime;  
-          State temp = {-power*255, -power*255, 0, 0, t};
-          states[index] = temp; 
-          index += 1; 
-          startTime = millis(); 
-          currState = right;  
+    // right 
+    else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
+      TurnRight();
+      if (currState != right) {
+            double t = millis() - startTime;  
+            State temp = {-power*255, -power*255, 0, 0, t};
+            states[index] = temp; 
+            index += 1; 
+            startTime = millis(); 
+            currState = right;  
+      }
+      Serial.println("in state: right"); 
     }
-    Serial.println("in state: right"); 
-  }
 
-  // left 
-  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
-    TurnLeft();
-    if (currState != left) {
-          double t = millis() - startTime;  
-          State temp = {0, 0, power*255, power*255, t}; 
-          states[index] = temp; 
-          index += 1; 
-          startTime = millis(); 
-          currState = left;  
+    // left 
+    else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
+      TurnLeft();
+      if (currState != left) {
+            double t = millis() - startTime;  
+            State temp = {0, 0, power*255, power*255, t}; 
+            states[index] = temp; 
+            index += 1; 
+            startTime = millis(); 
+            currState = left;  
+      }
+      Serial.println("in state: left");
     }
-    Serial.println("in state: left");
-  }
 
-  // stop 
-  else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
-    Stop();
-    if (currState != stop) {
-          State temp = {0, 0, 0, 0, 0}; 
-          states[index] = temp; 
-          numStates = index + 1; 
-          return states; 
-    }
-    Serial.println("neither");
-  }  
-} 
+    // stop 
+    else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0){
+      Stop();
+      if (currState != stop) {
+            State temp = {0, 0, 0, 0, 0}; 
+            states[index] = temp; 
+            numStates = index + 1; 
+            return states; 
+      }
+      Serial.println("neither");
+    }  
+  } 
+}
 
 /* 
  * Retraces a memorized line given an array of States 
