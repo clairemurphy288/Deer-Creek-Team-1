@@ -27,11 +27,17 @@ MeMegaPiDCMotor motor_10(10);
   double time; 
 };
 
+
+//enum for the line state 
+enum lineState { forward, left, right, stop, start }; 
+
 double angle_rad = PI/180.0;
 double angle_deg = 180.0/PI;
+lineState prevTurnState; 
 
 float T = 0;
 double power = 0.3;
+
 
 void motor_foward_left_run(int16_t speed)
 {
@@ -157,21 +163,38 @@ void lineFollow(){
 
     if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0) {
       Forward();
+      prevTurnState = forward; 
     Serial.println("both"); 
     }
 
   else if (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==0){
     TurnRight();
+    prevTurnState = right; 
     Serial.println("right"); 
   }
 
   else if (linefollower_63.readSensor()==0 && linefollower_64.readSensor()==1){
     TurnLeft();
+    prevTurnState = left; 
     Serial.println("left") ;
   }
 
   else {
-    Stop();
+    // while one of the sensors if off, keep turning same direction
+    while (linefollower_63.readSensor() ==0 && linefollower_64.readSensor() ==0) {
+       if (prevTurnState == left) {
+        TurnLeft(); 
+        prevTurnState = forward;  
+      }
+      else if (prevTurnState == right) {
+        TurnRight();
+        prevTurnState = forward;   
+      }
+      else {
+        Stop(); 
+      }
+    }
+    
     Serial.println("neither");
   }
   
@@ -181,8 +204,8 @@ void ObstacleAvoidance(){
   Backward();
   _delay(0.5);
   TurnRight();
-  _delay(0.5);
-  while(linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0) {
+  _delay(0.8);
+  while(linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
     motor_1.run(-0.3*255);
     motor_9.run(-0.3*255);
     motor_2.run(0.5*255);
@@ -193,12 +216,12 @@ void ObstacleAvoidance(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-    //if (barrier_61.isBarried() || barrier_62.isBarried()) {
-     // ObstacleAvoidance();
-    //}
-    //else {
-    lineFollow();
-  //}  
+    if (barrier_61.isBarried() || barrier_62.isBarried()) {
+      ObstacleAvoidance();
+    }
+    else {
+      lineFollow();
+  }  
 }
 
 
@@ -215,8 +238,6 @@ void loop() {
  */
 
 
-//enum for the line state 
-enum lineState { forward, left, right, stop, start}; 
 
 int numStates = 0; // total states we go through 
 State states[1000]; // stores the memorized path 
