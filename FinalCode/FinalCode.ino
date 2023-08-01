@@ -13,7 +13,7 @@ MeSingleLineFollower linefollower_63(63);
 MeSingleLineFollower linefollower_64(64);
 MeBarrierSensor barrier_61(61);
 MeBarrierSensor barrier_62(62);
-//MeBarrierSensor barrier_63(63);
+MeBarrierSensor barrier_60(60);
 MeMegaPiDCMotor motor_1(1);
 MeMegaPiDCMotor motor_9(9);
 MeMegaPiDCMotor motor_2(2);
@@ -166,6 +166,7 @@ void Stop() {
  * Takes a boolean for whether or not we are avoiding obstacles
  */ 
 void lineFollow() {
+  Serial.println("LINE FOLLOWING"); 
   // Turn on lights 
   for (int i =0; i<4; i++){
     rgbled_67.setColor(i, 255, 255, 255);
@@ -175,6 +176,7 @@ void lineFollow() {
   }
 
   // Stop when back left pressed
+  delay(5); 
   while (!collision_66.isCollision()) {
 
     // Check if we are avoiding obstacles, if so check sensors 
@@ -246,8 +248,8 @@ void ObstacleAvoidance() {
   while(linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
     motor_1.run(-0.3*255);
     motor_9.run(-0.3*255);
-    motor_2.run(0.5*255);
-    motor_10.run(0.5*255);
+    motor_2.run(0.7*255);
+    motor_10.run(0.7*255);
   }
 }
 
@@ -278,9 +280,7 @@ void memorizeLine(State path[], int n) {
   int index = 0; 
 
   // Go until back right impact switch is pressed, or path array becomes full
-  //while (!collision_66.isCollision()) {
-  while (linefollower_63.readSensor()!=1 && linefollower_64.readSensor()!=1) {
-    
+  while(!barrier_61.isBarried()) {
     // Array is full, stop 
     if (index == n-1) {
       Serial.println("FULL ARRAY");
@@ -331,7 +331,7 @@ void memorizeLine(State path[], int n) {
       // turn the direction we were last turning until back on line
       while (linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
         if (currState == left) {
-          TurnLeft(); 
+          TurnLeft();
         }
         else if (currState == right) {
           TurnRight(); 
@@ -392,8 +392,8 @@ void retraceLine(State states[], int n) {
  * then it will memorize a line and stop when the switch is pushed again, 
  * wait some delay, then retrace it */
 void lineMemorizeMain() {
-  State path[500]; 
-  int numStates = 500; 
+  State path[1000]; 
+  int numStates = 1000; 
 
   // Wait for back right impact switch to be pressed to start 
   while (!collision_66.isCollision()) {
@@ -409,7 +409,6 @@ void lineMemorizeMain() {
   Serial.println("Done Retracing");
 
   Stop(); 
-  _delay(60); // Just wait because don't want to run again 
 }
 
 
@@ -425,19 +424,11 @@ void lineMemorizeMain() {
  * Each time the function runs it runs each course (so should only need to run once)
  */
 void loop() {
-
-  // Wait for back left to be pressed, then line follow
-//  while (!collision_66.isCollision()) {
-//    Serial.println("Waiting for line follow"); 
-//  }
-//  lineFollow(); 
-  
-   //Wait for back left to be pressed, then run line follow with obstacle avoidance
-  while (!collision_66.isCollision()) {
-    Serial.println("Waiting for obstacle avoidance"); 
-  }
+  _delay(5); 
   lineFollow(); 
-
   // Then line memorize (function waits for back right to be pressed)
-  //lineMemorizeMain(); 
+  _delay(10); 
+  
+  lineMemorizeMain(); 
+  _delay(10); 
 }
