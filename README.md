@@ -12,4 +12,4 @@ This is our project.
 - Press `back right` (starts line memorization, lights on)
 - Press `back right` (stops line memorization)
 - **Move Robot**
-- Press `back left` (retraces line) 
+- Press `back left` (retraces line, lights off) 
