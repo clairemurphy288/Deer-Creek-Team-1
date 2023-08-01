@@ -407,7 +407,6 @@ void lineMemorizeMain() {
   }
   retraceLine(path, numStates); 
   Serial.println("Done Retracing");
-
   Stop(); 
 }
 
