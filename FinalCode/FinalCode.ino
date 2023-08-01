@@ -165,7 +165,7 @@ void Stop() {
  * Follows a line 
  * Takes a boolean for whether or not we are avoiding obstacles
  */ 
-void lineFollow(bool isAvoiding) {
+void lineFollow() {
   // Turn on lights 
   for (int i =0; i<4; i++){
     rgbled_67.setColor(i, 255, 255, 255);
@@ -178,7 +178,7 @@ void lineFollow(bool isAvoiding) {
   while (!collision_66.isCollision()) {
 
     // Check if we are avoiding obstacles, if so check sensors 
-    if (isAvoiding == true && ((barrier_61.isBarried() || barrier_62.isBarried()))) {
+    if (barrier_61.isBarried() || barrier_62.isBarried()) {
       ObstacleAvoidance(); 
     }
 
@@ -242,8 +242,8 @@ void ObstacleAvoidance() {
   Backward();
   _delay(0.5);
   TurnRight();
-  _delay(0.5);
-  while(linefollower_63.readSensor()==0 && linefollower_64.readSensor()==0) {
+  _delay(0.8);
+  while(linefollower_63.readSensor()==1 && linefollower_64.readSensor()==1) {
     motor_1.run(-0.3*255);
     motor_9.run(-0.3*255);
     motor_2.run(0.5*255);
@@ -278,7 +278,8 @@ void memorizeLine(State path[], int n) {
   int index = 0; 
 
   // Go until back right impact switch is pressed, or path array becomes full
-  while (!collision_65.isCollision()) {
+  //while (!collision_66.isCollision()) {
+  while (linefollower_63.readSensor()!=1 && linefollower_64.readSensor()!=1) {
     
     // Array is full, stop 
     if (index == n-1) {
@@ -391,11 +392,11 @@ void retraceLine(State states[], int n) {
  * then it will memorize a line and stop when the switch is pushed again, 
  * wait some delay, then retrace it */
 void lineMemorizeMain() {
-  State path[3000]; 
-  int numStates = 3000; 
+  State path[500]; 
+  int numStates = 500; 
 
   // Wait for back right impact switch to be pressed to start 
-  while (!collision_65.isCollision()) {
+  while (!collision_66.isCollision()) {
     Serial.println("Waiting to memorize"); 
   }
   memorizeLine(path, numStates); 
@@ -426,24 +427,17 @@ void lineMemorizeMain() {
 void loop() {
 
   // Wait for back left to be pressed, then line follow
-  while (!collision_66.isCollision()) {
-    Serial.println("Waiting for line follow"); 
-  }
-  lineFollow(false); 
+//  while (!collision_66.isCollision()) {
+//    Serial.println("Waiting for line follow"); 
+//  }
+//  lineFollow(); 
   
-  // Wait for back left to be pressed, then run line follow with obstacle avoidance
+   //Wait for back left to be pressed, then run line follow with obstacle avoidance
   while (!collision_66.isCollision()) {
     Serial.println("Waiting for obstacle avoidance"); 
   }
-  lineFollow(true); 
+  lineFollow(); 
 
   // Then line memorize (function waits for back right to be pressed)
-  lineMemorizeMain(); 
+  //lineMemorizeMain(); 
 }
-
-
-
-
-
-
-
